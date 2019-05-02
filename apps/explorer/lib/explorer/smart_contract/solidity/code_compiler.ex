@@ -3,6 +3,8 @@ defmodule Explorer.SmartContract.Solidity.CodeCompiler do
   Module responsible to compile the Solidity code of a given Smart Contract.
   """
 
+  alias Explorer.SmartContract.SolcDownloader
+
   @new_contract_name "New.sol"
   @allowed_evm_versions ["homestead", "tangerineWhistle", "spuriousDragon", "byzantium", "constantinople", "petersburg"]
 
@@ -79,6 +81,8 @@ defmodule Explorer.SmartContract.Solidity.CodeCompiler do
         "byzantium"
       end
 
+    path = SolcDownloader.ensure_exists(compiler_version)
+
     {response, _status} =
       System.cmd(
         "node",
@@ -90,7 +94,8 @@ defmodule Explorer.SmartContract.Solidity.CodeCompiler do
           optimization_runs,
           @new_contract_name,
           external_libs_string,
-          checked_evm_version
+          checked_evm_version,
+          path
         ]
       )
 
